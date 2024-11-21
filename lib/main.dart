@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scrapper/scrap.dart';
+import 'package:flutter_scrapper/sunat_nval.dart';
 import 'package:flutter_scrapper/sunat_validador.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SunatRucValidator(),
+      home: const SunatNval(),
     );
   }
 }

@@ -34,7 +34,7 @@ class _SunatRucValidatorState extends State<SunatRucValidator> {
 
     // Datos del formulario a enviar (esto es un ejemplo, debes inspeccionar la página web para confirmar los nombres de los campos)
     final data = {
-      'ruc': ruc, // Aquí va el número de RUC que se ingresa en el formulario
+      'ruc': ruc,
       'accion':
           'consPorRuc' // Este es el valor para el botón de consulta en el formulario, puede variar
     };
@@ -51,7 +51,8 @@ class _SunatRucValidatorState extends State<SunatRucValidator> {
         });
 
         // Guardar el contenido HTML en un archivo
-        await _saveHtmlToFile(response.body);
+        //await _saveHtmlToFile(response.body);
+        //await _saveHtmlToProject(response.body);
       } else {
         setState(() {
           _response = 'Error al consultar el RUC.';
@@ -88,6 +89,26 @@ class _SunatRucValidatorState extends State<SunatRucValidator> {
       setState(() {
         _response = 'Error al guardar el archivo: $e';
       });
+    }
+  }
+
+  Future<void> _saveHtmlToProject(String htmlContent) async {
+    try {
+      // Ruta absoluta a tu directorio de trabajo (directorio del proyecto en tu máquina local)
+      final projectDirectory = Directory(
+          '/home/luiseduardo/StudioProjects/flutter_scrapper/lib'); // Reemplaza con la ruta correcta de tu proyecto
+
+      // Ruta para el archivo HTML dentro del proyecto
+      final filePath =
+          '${projectDirectory.path}/respuesta_sunat_${DateTime.now().millisecondsSinceEpoch}.html';
+
+      // Crear el archivo y escribir el contenido HTML
+      final file = File(filePath);
+      await file.writeAsString(htmlContent);
+
+      print('Archivo guardado en: $filePath');
+    } catch (e) {
+      print('Error al guardar el archivo: $e');
     }
   }
 
