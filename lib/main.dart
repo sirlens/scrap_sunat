@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scrapper/scrap.dart';
-import 'package:flutter_scrapper/sunad_scrap.dart';
+import 'package:flutter_scrapper/sunad/sunad_scrap.dart';
 import 'package:flutter_scrapper/sunat_nval.dart';
 import 'package:flutter_scrapper/sunat_validador.dart';
 

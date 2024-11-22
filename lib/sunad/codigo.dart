@@ -2,8 +2,7 @@ class Codigo {
   String extraerContenidoEntreTagString(
       String cadena, int posicion, String nombreInicio, String nombreFin) {
     String respuesta = "";
-    int posicionInicio =
-        cadena.toLowerCase().indexOf(nombreInicio.toLowerCase(), posicion);
+    int posicionInicio = cadena.indexOf(nombreInicio, posicion);
 
     if (posicionInicio > -1) {
       posicionInicio += nombreInicio.length;

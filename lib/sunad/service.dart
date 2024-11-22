@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_scrapper/sunad/codigo.dart';
 import 'package:flutter_scrapper/sunad/inforuc.dart';
 import 'package:flutter_scrapper/sunad/sunat.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/io_client.dart';
+//import 'package:http/http.dart' as http;
 
 class SunatService {
   // Función para obtener información del RUC
@@ -226,10 +229,24 @@ class SunatService {
   }
 
   Future<InfoRuc?> obtenerInfoPorRucAsync(String ruc) async {
+    //final cliente = http.Client();
+    final cliente = IOClient();
     const url =
-        'https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/jcrS00Alias';
+        'https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/FrameCriterioBusquedaWeb.jsp';
 
-    final headers = {
+    final primerGet = await cliente.get(
+      Uri.parse(url),
+    );
+    final cookies = primerGet.headers['set-cookie'] ?? '';
+    debugPrint(
+        'LA COOKIE: $cookies ============ PrimerGet: ${primerGet.body.substring(0, min(500, primerGet.body.length))}');
+
+/*  'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36',
+    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/605.1.15', */
+
+    Map<String, String> headers = {
+      //'Cookie': cookies,
+      'Content-Type': 'application/x-www-form-urlencoded',
       'Host': 'e-consultaruc.sunat.gob.pe',
       'sec-ch-ua':
           ' " Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"',
@@ -240,11 +257,27 @@ class SunatService {
       'Sec-Fetch-User': '?1',
       'Upgrade-Insecure-Requests': '1',
       'User-Agent':
-          'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36'
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.4 Mobile/15E148 Safari/605.1.15',
+      'X-Requested-With': 'XMLHttpRequest'
     };
-    final cliente = http.Client();
-    //final cliente = IOClient();
+
+    final Map<String, String> consultHeaders = {
+      'Cookie': cookies,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      'Accept':
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Origin': 'https://e-consultaruc.sunat.gob.pe',
+      'Referer':
+          'https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/FrameCriterioBusquedaWeb.jsp',
+    };
+    headers = consultHeaders;
+
     final respuesta = await cliente.get(Uri.parse(url), headers: headers);
+
+    debugPrint(
+        'Usando Header >>>>>>>${respuesta.body.substring(0, min(500, respuesta.body.length))}');
 
     if (respuesta.statusCode == 200) {
       await Future.delayed(const Duration(milliseconds: 100));
@@ -254,7 +287,8 @@ class SunatService {
       headers['Sec-Fetch-Site'] = 'same-origin';
 
       String numeroDNI = '12345678';
-      final datos = {
+
+      Map<String, dynamic> datos = {
         'accion': 'consPorTipdoc',
         'razSoc': '',
         'nroRuc': '',
@@ -275,6 +309,7 @@ class SunatService {
       if (respuestaRandom.statusCode == 200) {
         await Future.delayed(const Duration(milliseconds: 100));
         final contenidoHTML = respuestaRandom.body;
+        debugPrint(contenidoHTML);
         final numeroRandom = Codigo().extraerContenidoEntreTagString(
             contenidoHTML, 0, 'name="numRnd" value="', '">');
 

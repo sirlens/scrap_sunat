@@ -22,7 +22,7 @@ class _RucWidgetState extends State<RucWidget> {
       });
     } catch (e) {
       // Manejar errores, por ejemplo, mostrar un mensaje al usuario
-      debugPrint('Error: $e');
+      debugPrint('---Error: $e');
     }
   }
 
